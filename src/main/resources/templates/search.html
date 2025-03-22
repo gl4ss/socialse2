@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search</title>
+    <!-- Include local Bootstrap 5 CSS -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<header th:replace="~{fragments :: header}"></header>
+
+<div class="container mt-5">
+    <h1 class="mb-4">Search Results</h1>
+
+    <!-- Users Found Section -->
+    <div>
+        <h2>Users Found</h2>
+        <div th:if="${users}">
+            <ul class="list-group">
+                <li class="list-group-item" th:each="user : ${users}">
+                    <a th:href="@{/user/{userId}(userId=${user.id})}" th:text="${user.username}"></a>
+                </li>
+            </ul>
+        </div>
+        <div th:if="${users.isEmpty()}">
+            <p class="text-muted">No users found.</p>
+        </div>
+    </div>
+
+    <!-- Posts Found Section -->
+    <div>
+        <h2>Posts Found</h2>
+        <div th:if="${posts}">
+            <ul class="list-group">
+                <li class="list-group-item" th:each="post : ${posts}">
+                    <a th:href="@{/post/{postId}(postId=${post.id})}" th:text="${post.title}"></a>
+                </li>
+            </ul>
+        </div>
+        <div th:if="${posts.isEmpty()}">
+            <p class="text-muted">No posts found.</p>
+        </div>
+    </div>
+</div>
+<script src="/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

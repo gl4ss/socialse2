@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <!-- Include locally loaded Bootstrap 5 CSS -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Additional styling */
+        .post-container {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: row;
+        }
+
+        .post-image {
+            width: 200px;
+            height: 150px;
+            object-fit: cover;
+            margin-right: 20px; /* Add margin between image and text */
+        }
+
+        .post-content {
+            flex: 1;
+        }
+
+        .post-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+<header th:replace="~{fragments :: header}"></header>
+<div class="container mt-5">
+    <h1 class="mb-4">Home</h1>
+    <!-- Iterate over each post -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="post-container" th:each="post : ${posts}">
+                <!-- Display post image -->
+                <img alt="Post image" class="post-image" th:src="@{/post/image/{id}(id=${post.id})}">
+                <div class="post-content">
+                    <h2 th:text="${post.title}">Title</h2>
+                    <p th:text="${post.shortDescription}">Short Description</p>
+                    <p th:text="${#temporals.format(post.createdAt,'hh:mm:ss - dd/MM/yyyy')}">Creation Time</p>
+                    <div class="post-buttons">
+                        <a class="btn btn-primary" th:href="@{/post/{postId}(postId=${post.id})}">View</a>
+                        <!-- Show edit and delete options if the user is the owner -->
+                        <div th:if="${#authentication.name == post.ownerName}">
+                            <a class="btn btn-secondary" th:href="@{/post/{postId}/edit(postId=${post.id})}">Edit</a>
+                            <a class="btn btn-danger" th:href="@{/post/{postId}/delete(postId=${post.id})}">Delete</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pagination controls -->
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            <li class="page-item" th:classappend="${currentPage == 1}? 'disabled'">
+                <a class="page-link" th:href="@{/(page=1)}">First</a>
+            </li>
+            <li class="page-item" th:classappend="${currentPage == 1}? 'disabled'">
+                <a aria-label="Previous" class="page-link" th:href="@{/(page=${currentPage - 1})}">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <li class="page-item" th:classappend="${i == currentPage}? 'active'"
+                th:each="i : ${#numbers.sequence(1, totalPages)}">
+                <a class="page-link" th:href="@{/(page=${i})}" th:text="${i}"></a>
+            </li>
+            <li class="page-item" th:classappend="${currentPage == totalPages}? 'disabled'">
+                <a aria-label="Next" class="page-link" th:href="@{/(page=${currentPage + 1})}">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+            <li class="page-item" th:classappend="${currentPage == totalPages}? 'disabled'">
+                <a class="page-link" th:href="@{/(page=${totalPages})}">Last</a>
+            </li>
+        </ul>
+    </nav>
+
+</div>
+<script src="/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
