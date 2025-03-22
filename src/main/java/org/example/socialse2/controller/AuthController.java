@@ -27,17 +27,22 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String registerUser(@Valid @ModelAttribute("registrationDto") RegistrationDto registrationDto,
-                               BindingResult bindingResult,
-                               Model model) {
+    public String registerUser(
+            @Valid @ModelAttribute("registrationDto") RegistrationDto registrationDto,
+            BindingResult bindingResult,
+            Model model) {
+            
+        // Check for existing username
         User existingUser = userService.findByUsername(registrationDto.getUsername());
         if (existingUser != null) {
             bindingResult.rejectValue("username", "username.exists", "Username already exists");
         }
+        
         if (bindingResult.hasErrors()) {
             model.addAttribute("registrationDto", registrationDto);
             return "register";
         }
+        
         userService.createUser(registrationDto);
         return "redirect:/register?success";
     }
@@ -46,18 +51,4 @@ public class AuthController {
     public String showLoginForm() {
         return "login";
     }
-    //
-    //    @PostMapping("/login")
-    //    public String loginUser(@Valid @ModelAttribute("loginDto") LoginDto loginDto,
-    //                            BindingResult bindingResult,
-    //                            Model model) {
-    //        if (bindingResult.hasErrors()) {
-    //            return "login";
-    //        }
-    //        if (!userService.authenticateUser(loginDto)) {
-    //            model.addAttribute("loginError", "Invalid username or password");
-    //            return "login";
-    //        }
-    //        return "redirect:/";
-    //    }
 }
