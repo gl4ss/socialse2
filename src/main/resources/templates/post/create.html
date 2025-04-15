@@ -3,38 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <title>Admin - Create Post</title>
-    <!-- Include local Bootstrap 5 CSS -->
     <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/create-post.css" rel="stylesheet">
+    <link href="/css/header.css" rel="stylesheet">
     <script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script>
 </head>
 <body>
 <header th:replace="~{fragments :: header}"></header>
-<div class="container mt-5">
-    <h1>Create Post</h1>
-    <form enctype="multipart/form-data" method="post" th:action="@{/post/create}" th:object="${postDto}">
-        <div class="mb-3">
-            <label class="form-label" for="title">Title:</label>
-            <input class="form-control" id="title" th:field="*{title}" type="text">
-            <div class="text-danger" th:errors="*{title}" th:if="${#fields.hasErrors('title')}"></div>
-        </div>
-        <div class="mb-3">
-            <label class="form-label" for="shortDescription">Short Description:</label>
-            <input class="form-control" id="shortDescription" th:field="*{shortDescription}" type="text">
-            <div class="text-danger" th:errors="*{shortDescription}"
-                 th:if="${#fields.hasErrors('shortDescription')}"></div>
-        </div>
-        <div class="mb-3">
-            <label class="form-label" for="content">Content:</label>
-            <textarea class="form-control" id="content" th:field="*{content}"></textarea>
-            <div class="text-danger" th:errors="*{content}" th:if="${#fields.hasErrors('content')}"></div>
-        </div>
-        <div class="mb-3">
-            <label class="form-label" for="image">Upload Image:</label>
-            <input class="form-control" id="image" name="imageFile" th:field="*{imageFile}" type="file">
-            <div class="text-danger" th:errors="*{imageFile}" th:if="${#fields.hasErrors('imageFile')}"></div>
-        </div>
-        <button class="btn btn-primary" type="submit">Submit</button>
-    </form>
+
+<div class="create-post-container">
+    <div class="form-wrapper">
+        <h1 class="form-title">Create Post</h1>
+        <form enctype="multipart/form-data" method="post" th:action="@{/post/create}" th:object="${postDto}">
+            <div class="mb-3">
+                <label class="form-label" for="title">Title:</label>
+                <input class="form-control custom-input" id="title" th:field="*{title}" type="text">
+                <div class="text-danger" th:errors="*{title}" th:if="${#fields.hasErrors('title')}"></div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="shortDescription">Short Description:</label>
+                <input class="form-control custom-input" id="shortDescription" th:field="*{shortDescription}" type="text">
+                <div class="text-danger" th:errors="*{shortDescription}" th:if="${#fields.hasErrors('shortDescription')}"></div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="content">Content:</label>
+                <textarea class="form-control custom-textarea" id="content" th:field="*{content}"></textarea>
+                <div class="text-danger" th:errors="*{content}" th:if="${#fields.hasErrors('content')}"></div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="image">Upload Image:</label>
+                <input class="form-control custom-input" id="image" name="imageFile" th:field="*{imageFile}" type="file">
+                <div class="text-danger" th:errors="*{imageFile}" th:if="${#fields.hasErrors('imageFile')}"></div>
+            </div>
+            <button class="btn btn-submit" type="submit">Submit</button>
+        </form>
+    </div>
 </div>
 
 <script>

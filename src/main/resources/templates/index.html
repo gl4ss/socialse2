@@ -3,40 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>Home</title>
-    <!-- Include locally loaded Bootstrap 5 CSS -->
     <link href="/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        /* Additional styling */
-        .post-container {
-            border: 1px solid #ddd;
-            padding: 20px;
-            margin-bottom: 20px;
-            display: flex;
-            flex-direction: row;
-        }
-
-        .post-image {
-            width: 200px;
-            height: 150px;
-            object-fit: cover;
-            margin-right: 20px; /* Add margin between image and text */
-        }
-
-        .post-content {
-            flex: 1;
-        }
-
-        .post-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
-    </style>
+    <link href="/css/home.css" rel="stylesheet">
+    <link href="/css/header.css" rel="stylesheet">
 </head>
 <body>
 <header th:replace="~{fragments :: header}"></header>
 <div class="container mt-5">
     <h1 class="mb-4">Home</h1>
+
     <!-- Iterate over each post -->
     <div class="row">
         <div class="col-md-12">
@@ -49,7 +24,6 @@
                     <p th:text="${#temporals.format(post.createdAt,'hh:mm:ss - dd/MM/yyyy')}">Creation Time</p>
                     <div class="post-buttons">
                         <a class="btn btn-primary" th:href="@{/post/{postId}(postId=${post.id})}">View</a>
-                        <!-- Show edit and delete options if the user is the owner -->
                         <div th:if="${#authentication.name == post.ownerName}">
                             <a class="btn btn-secondary" th:href="@{/post/{postId}/edit(postId=${post.id})}">Edit</a>
                             <a class="btn btn-danger" th:href="@{/post/{postId}/delete(postId=${post.id})}">Delete</a>
@@ -85,8 +59,9 @@
             </li>
         </ul>
     </nav>
-
 </div>
+
 <script src="/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+

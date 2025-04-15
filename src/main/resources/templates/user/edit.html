@@ -3,86 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <title>Edit Profile</title>
-    <!-- Include local Bootstrap 5 CSS -->
+    <!-- Bootstrap CSS -->
     <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="/css/edit-profile.css" rel="stylesheet">
+    <link href="/css/header.css" rel="stylesheet">
 </head>
 <body>
 <header th:replace="~{fragments :: header}"></header>
 
-<div class="container mt-5">
-    <div th:object="${user}">
-        <h1>Edit Profile</h1>
+<!-- Container with gradient background -->
+<div class="edit-profile-container">
+    <div th:object="${user}" class="form-wrapper">
+        <h1 class="form-title">Edit Profile</h1>
         <form enctype="multipart/form-data" th:action="@{/user/edit}" th:method="post">
             <input th:field="*{id}" type="hidden">
+
             <div class="mb-3">
                 <label class="form-label" for="firstName">First Name:</label>
-                <input class="form-control" id="firstName" th:field="*{firstName}" type="text">
+                <input class="form-control custom-input" id="firstName" th:field="*{firstName}" type="text">
                 <span class="text-danger" th:errors="*{firstName}"></span>
             </div>
 
             <div class="mb-3">
                 <label class="form-label" for="lastName">Last Name:</label>
-                <input class="form-control" id="lastName" th:field="*{lastName}" type="text">
+                <input class="form-control custom-input" id="lastName" th:field="*{lastName}" type="text">
                 <span class="text-danger" th:errors="*{lastName}"></span>
             </div>
 
             <div class="mb-3">
                 <label class="form-label" for="email">Email:</label>
-                <input class="form-control" id="email" th:field="*{email}" type="email">
+                <input class="form-control custom-input" id="email" th:field="*{email}" type="email">
                 <span class="text-danger" th:errors="*{email}"></span>
             </div>
 
             <div class="mb-3">
                 <label class="form-label" for="username">Username:</label>
-                <input class="form-control" id="username" th:field="*{username}" type="text">
+                <input class="form-control custom-input" id="username" th:field="*{username}" type="text">
                 <span class="text-danger" th:errors="*{username}"></span>
             </div>
 
             <div class="mb-3">
                 <label class="form-label" for="password">Password:</label>
-                <input class="form-control" id="password" th:field="*{password}" type="password">
+                <input class="form-control custom-input" id="password" th:field="*{password}" type="password">
                 <span class="text-danger" th:errors="*{password}"></span>
             </div>
 
-            <!-- Additional Fields -->
             <div class="mb-3">
                 <label class="form-label" for="bio">Bio:</label>
-                <textarea class="form-control" id="bio" th:field="*{bio}"></textarea>
+                <textarea class="form-control custom-input" id="bio" th:field="*{bio}"></textarea>
                 <span class="text-danger" th:errors="*{bio}"></span>
             </div>
 
             <div class="mb-3">
                 <label class="form-label" for="website">Website:</label>
-                <input class="form-control" id="website" th:field="*{website}" type="text">
+                <input class="form-control custom-input" id="website" th:field="*{website}" type="text">
                 <span class="text-danger" th:errors="*{website}"></span>
             </div>
 
             <div class="mb-3">
                 <label class="form-label" for="dateOfBirth">Date of Birth:</label>
-                <input class="form-control" id="dateOfBirth" th:field="*{dateOfBirth}" type="date">
+                <input class="form-control custom-input" id="dateOfBirth" th:field="*{dateOfBirth}" type="date">
                 <span class="text-danger" th:errors="*{dateOfBirth}"></span>
             </div>
 
-            <!-- Current Profile Image -->
             <div class="mb-3">
-                <label class="form-label" for="currentImage">Current Profile Image:</label><br>
+                <label class="form-label">Current Profile Image:</label><br>
                 <img alt="Profile picture" height="100"
-                     id="currentImage"
                      th:src="${user.profileImage != null ? '/user/image/' + user.id : '/images/Default_pfp.svg'}"
-                     width="100">
+                     width="100" class="rounded-circle border shadow-sm">
             </div>
 
-            <!-- Image Upload -->
             <div class="mb-3">
-                <label class="form-label" for="image">Upload Image:</label><br>
-                <input class="form-control" id="image" name="imageFile" th:field="*{imageFile}" type="file">
+                <label class="form-label" for="image">Upload new image:</label>
+                <input class="form-control custom-input" id="image" name="imageFile" th:field="*{imageFile}" type="file">
                 <span class="text-danger" th:errors="*{imageFile}"></span>
             </div>
 
-            <button class="btn btn-primary" type="submit">Update Profile</button>
+            <button class="btn btn-update-profile" type="submit">Update Profile</button>
         </form>
     </div>
 </div>
+
 <script src="/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

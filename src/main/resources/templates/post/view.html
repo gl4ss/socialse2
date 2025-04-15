@@ -3,60 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <title>View Post</title>
-    <!-- Include local Bootstrap 5 CSS -->
     <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/view-post.css" rel="stylesheet">
+    <link href="/css/header.css" rel="stylesheet">
 </head>
 <body>
 <header th:replace="~{fragments :: header}"></header>
 
-<div class="container mt-5">
+<!-- Main Wrapper -->
+<div class="post-body-card container mt-5">
     <!-- Post Title and Short Description -->
-    <h1 th:text="${postDto.title}"></h1>
-    <hr>
-    <h4 th:text="${postDto.shortDescription}"></h4>
+    <h1 class="post-title" th:text="${postDto.title}"></h1>
+    <h5 class="post-short-description mb-4" th:text="${postDto.shortDescription}"></h5>
 
     <!-- Post Image -->
-    <img alt="Post Image" class="img-fluid my-4" th:src="@{/post/image/{id}(id=${postDto.id})}">
-    <hr>
+    <img alt="Post Image" class="img-fluid post-image mb-4" th:src="@{/post/image/{id}(id=${postDto.id})}">
 
     <!-- Post Content -->
-    <div th:utext="${postDto.content}"></div>
+    <div class="post-content mb-4" th:utext="${postDto.content}"></div>
 
-    <!-- Post Metadata (Timestamp, Post Owner) -->
-    <div class="mt-5">
-        <p><strong>Created At:</strong> <span th:text="${postDto.createdAt}"></span></p>
-        <p><strong>Updated At:</strong> <span th:text="${postDto.updatedAt}"></span></p>
-        <p><strong>Post Owner:</strong> <a th:href="@{/user/{userId}(userId=${postDto.ownerId})}"
-                                           th:text="${postDto.getOwnerName()}"></a></p>
+    <!-- Post Metadata -->
+    <div class="post-meta mb-4">
+        <p><strong>Create at:</strong> <span th:text="${postDto.createdAt}"></span></p>
+        <p><strong>Updated at:</strong> <span th:text="${postDto.updatedAt}"></span></p>
+        <p><strong>Post owner:</strong>
+            <a th:href="@{/user/{userId}(userId=${postDto.ownerId})}" th:text="${postDto.getOwnerName()}"></a>
+        </p>
     </div>
 
     <!-- Comments Section -->
-    <h3 class="mt-5">Comments:</h3>
-    <div class="mb-4">
-        <div class="border p-3" th:each="comment : ${comments}">
-            <h5 th:text="${comment.ownerName}">Anonymous user</h5>
+    <div class="comments-section mb-4">
+        <h4 class="mb-3">Comments:</h4>
+        <div class="comment-box mb-3" th:each="comment : ${comments}">
+            <h6 th:text="${comment.ownerName}">Anonymous user</h6>
             <p th:text="${comment.content}"></p>
             <div th:if="${#authentication.name == comment.ownerName}">
-                <a class="btn btn-danger" th:href="@{/post/__${postId}__/comment/__${comment.id}__/delete}">Delete</a>
+                <a class="btn btn-danger btn-sm" th:href="@{/post/__${postId}__/comment/__${comment.id}__/delete}">Delete</a>
             </div>
         </div>
     </div>
 
     <!-- Comment Form -->
-    <div sec:authorize="isAuthenticated()">
+    <div class="comment-form" sec:authorize="isAuthenticated()">
         <form method="post" role="form" th:action="@{/post/__${postId}__/comment}" th:object="${commentDto}">
-            <h4 class="mb-3">Leave a comment</h4>
+            <h5 class="mb-3">Leave a comment:</h5>
             <input th:field="*{id}" type="hidden">
             <div class="mb-3">
                 <label class="form-label" for="comment">Content</label>
-                <textarea class="form-control" cols="20" id="comment" name="comment" rows="10"
+                <textarea class="form-control" cols="20" id="comment" name="comment" rows="6"
                           th:field="*{content}"></textarea>
             </div>
             <button class="btn btn-primary" type="submit">Submit</button>
         </form>
     </div>
-    <!-- End of Comment Form -->
 </div>
+
 <script src="/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

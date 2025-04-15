@@ -1,0 +1,82 @@
+/* Toàn trang nền gradient */
+body {
+  background: linear-gradient(to bottom, #b5eadb, #5c6bc0, #4a148c) !important;
+  margin: 0;
+  padding: 0;
+}
+
+/* Bọc form và căn giữa */
+.edit-profile-container {
+  min-height: 100vh;
+  padding: 40px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* Thẻ form có nền trắng, bo góc, đổ bóng */
+.form-wrapper {
+  background: #ffffff;
+  padding: 30px 40px;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  color: #000;
+}
+
+/* Tiêu đề form */
+.form-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 24px;
+  color: #000;
+}
+
+/* Input sáng trên nền trắng */
+.custom-input {
+  border-radius: 10px !important;
+  padding: 10px 14px;
+  font-size: 15px;
+  background-color: white;
+  color: black;
+}
+
+/* Nút cập nhật */
+.btn-update-profile {
+  background-color: #6cd1b6;
+  color: white;
+  font-weight: 600;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.btn-update-profile:hover {
+  background-color: #4fc9a8;
+}
+
+/* Ảnh đại diện */
+img.rounded-circle {
+  object-fit: cover;
+}
+
+/* Label của các trường */
+label.form-label {
+  color: #000000 !important;
+  font-weight: 500;
+}
+
+/* Placeholder và nội dung nhập */
+.custom-input,
+.custom-input::placeholder,
+textarea.form-control,
+textarea.form-control::placeholder {
+  color: #6c757d !important;
+}
+
+/* Card Header: Bo góc */
+.card-header {
+  border-radius: 20px;
+}

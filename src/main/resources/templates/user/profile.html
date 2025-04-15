@@ -3,32 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <title>User Profile</title>
-    <!-- Include local Bootstrap 5 CSS -->
     <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/user-profile.css" rel="stylesheet">
+    <link href="/css/header.css" rel="stylesheet">
 </head>
 <body>
 <header th:replace="~{fragments :: header}"></header>
 
 <div class="container mt-5">
-    <div class="row">
-        <div class="col-md-3">
+    <div class="row justify-content-center align-items-start">
+        <div class="col-md-3 text-center">
             <h1>User Profile</h1>
             <img alt="Profile picture" class="img-fluid rounded-circle mb-3"
                  th:src="${user.profileImage != null ? '/user/image/' + user.id : '/images/Default_pfp.svg'}">
         </div>
-        <div class="col-md-9">
-            <div th:object="${user}">
+        <div class="col-md-6">
+            <div class="profile-card" th:object="${user}">
                 <p><strong>First Name:</strong> <span th:text="*{firstName}"></span></p>
                 <p><strong>Last Name:</strong> <span th:text="*{lastName}"></span></p>
                 <p><strong>Email:</strong> <span th:text="*{email}"></span></p>
                 <p><strong>Username:</strong> <span th:text="*{username}"></span></p>
                 <p><strong>Bio:</strong> <span th:text="*{bio}"></span></p>
-                <p><strong>Date of Birth:</strong> <span
-                        th:text="${#dates.format(user.dateOfBirth, 'yyyy-MM-dd')}"></span></p>
+                <p><strong>Date of Birth:</strong> <span th:text="${#dates.format(user.dateOfBirth, 'yyyy-MM-dd')}"></span></p>
                 <p><strong>Website:</strong> <span th:text="*{website}"></span></p>
                 <div th:if="${#authentication.name == user.username}">
-                    <a class="btn btn-primary me-2" th:href="@{/user/edit}">Edit Profile</a>
-                    <a class="btn btn-danger" th:href="@{'/user/' + *{id} + '/delete'}">Delete Profile</a>
+                    <a class="btn btn-primary me-2 text-black" th:href="@{/user/edit}">Edit Profile</a>
+                    <a class="btn btn-danger me-2 text-black" th:href="@{'/user/' + *{id} + '/delete'}">Delete Profile</a>
                 </div>
             </div>
         </div>
