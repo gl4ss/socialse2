@@ -18,17 +18,17 @@ public class Application {
     @Bean
     public CommandLineRunner applicationStartupRunner(ConfigurableApplicationContext ctx) {
         return args -> {
-            UserService userService = ctx.getBean(UserService.class);
+            UserService accountService = ctx.getBean(UserService.class);
             // Check if the admin user already exists
-            if (userService.findByUsername("admin") == null) {
+            if (accountService.retrieveUserByUsername("admin") == null) {
                 RegistrationDto adminUser = new RegistrationDto();
                 adminUser.setFirstName("Admin");
                 adminUser.setLastName("User");
                 adminUser.setEmail("admin@example.com");
                 adminUser.setUsername("admin");
                 adminUser.setPassword("admin");
-                userService.createUser(adminUser);
-                userService.makeUserAdmin(adminUser.getUsername());
+                accountService.registerNewUser(adminUser);
+                accountService.assignAdminRole(adminUser.getUsername());
                 System.out.println("Admin user created!");
             } else {
                 System.out.println("Admin user already exists.");

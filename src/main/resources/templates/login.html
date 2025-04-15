@@ -24,6 +24,7 @@
                 <button class="btn btn-primary" type="submit">Login</button>
                 <p class="text-danger mt-3" th:if="${param.error}">Invalid username or password.</p>
                 <p class="text-success mt-3" th:if="${param.logout}">You have been logged out successfully.</p>
+                <p class="text-success mt-3" th:if="${param.registered}">Registration successful! Please login with your new account.</p>
             </form>
             <p class="mt-3">Don't have an account? <a href="/register">Register</a></p>
         </div>

@@ -12,62 +12,72 @@ import org.example.socialse2.repository.UserRepository;
 import org.example.socialse2.service.CommentService;
 import org.example.socialse2.util.SecurityUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class CommentServiceImpl implements CommentService {
 
-    private final CommentRepository commentRepository;
+    private final CommentRepository feedbackRepository;
+    private final PostRepository contentRepository;
+    private final UserRepository accountRepository;
 
-    private final PostRepository postRepository;
-
-    private final UserRepository userRepository;
-
-    public CommentServiceImpl(CommentRepository commentRepository,
-                              PostRepository postRepository,
-                              UserRepository userRepository) {
-        this.commentRepository = commentRepository;
-        this.postRepository = postRepository;
-        this.userRepository = userRepository;
+    public CommentServiceImpl(CommentRepository feedbackRepository,
+                              PostRepository contentRepository,
+                              UserRepository accountRepository) {
+        this.feedbackRepository = feedbackRepository;
+        this.contentRepository = contentRepository;
+        this.accountRepository = accountRepository;
     }
 
     @Override
-    public void addComment(Long postId, CommentDto commentDto) {
-        String username = Objects.requireNonNull(SecurityUtils.getCurrentUserDetails()).getUsername();
-        User user = userRepository.findByUsername(username);
-        postRepository.findById(postId).ifPresent(post -> {
-            Comment comment = CommentMapper.toEntity(commentDto);
-            comment.setPost(post);
-            comment.setUser(user);
-            commentRepository.save(comment);
-        });
-    }
-
-    @Override
-    public List<CommentDto> getComments(Long postId) {
-        Post post = postRepository.findById(postId)
-                                  .orElseThrow(() -> new EntityNotFoundException("Post with id " +
-                                                                                 postId +
-                                                                                 " not found"));
-        return commentRepository.findByPost(post).stream().map(CommentMapper::toDto).collect(Collectors.toList());
-    }
-
-    @Override
-    public void deleteComment(Long commentId) {
-        commentRepository.deleteById(commentId);
-    }
-
-    @Override
-    public Comment getById(Long commentId) {
-        Optional<Comment> comment = commentRepository.findById(commentId);
-        if (comment.isPresent()) {
-            return comment.get();
+    @Transactional
+    public void createNewComment(Long postId, CommentDto commentDto) {
+        String username = Objects.requireNonNull(
+            SecurityUtils.getCurrentUserDetails(), 
+            "Authentication required to leave feedback"
+        ).getUsername();
+        
+        User account = accountRepository.findByUsername(username);
+        if (account == null) {
+            throw new EntityNotFoundException("Account not found for authenticated user");
         }
-        throw new EntityNotFoundException("Comment with id " + commentId + " not found");
+        
+        Post content = contentRepository.findById(postId)
+            .orElseThrow(() -> new EntityNotFoundException("Content with ID " + postId + " not available"));
+            
+        Comment feedback = CommentMapper.toEntity(commentDto);
+        feedback.setPost(content);
+        feedback.setUser(account);
+        feedbackRepository.save(feedback);
     }
 
+    @Override
+    public List<CommentDto> retrieveCommentsByPostId(Long postId) {
+        Post content = contentRepository.findById(postId)
+            .orElseThrow(() -> new EntityNotFoundException("Content with ID " + postId + " not available"));
+            
+        return feedbackRepository.findByPost(content).stream()
+            .map(CommentMapper::toDto)
+            .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public void removeComment(Long commentId) {
+        // Verify feedback exists before deletion
+        if (!feedbackRepository.existsById(commentId)) {
+            throw new EntityNotFoundException("Cannot delete - feedback with ID " + commentId + " not found");
+        }
+        feedbackRepository.deleteById(commentId);
+    }
+
+    @Override
+    public Comment retrieveCommentById(Long commentId) {
+        return feedbackRepository.findById(commentId)
+            .orElseThrow(() -> new EntityNotFoundException("Feedback with ID " + commentId + " not found"));
+    }
 }

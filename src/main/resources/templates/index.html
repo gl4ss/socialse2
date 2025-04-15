@@ -6,30 +6,56 @@
     <!-- Include locally loaded Bootstrap 5 CSS -->
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* Additional styling */
+        /* Updated styling for new post layout */
         .post-container {
             border: 1px solid #ddd;
+            border-radius: 8px;
             padding: 20px;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .post-image-container {
             display: flex;
-            flex-direction: row;
+            justify-content: center;
+            margin-bottom: 15px;
         }
-
         .post-image {
-            width: 200px;
-            height: 150px;
+            max-width: 100%;
+            max-height: 250px;
             object-fit: cover;
-            margin-right: 20px; /* Add margin between image and text */
+            border-radius: 5px;
         }
-
-        .post-content {
-            flex: 1;
+        .post-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            text-align: center;
         }
-
+        .post-description {
+            color: #555;
+            margin-bottom: 15px;
+        }
+        .post-metadata {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        .post-author {
+            font-weight: bold;
+        }
+        .post-comment {
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            border-left: 3px solid #0d6efd;
+        }
+        .comment-author {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
         .post-buttons {
             display: flex;
-            gap: 10px;
-            margin-top: 10px;
+            justify-content: center;
         }
     </style>
 </head>
@@ -41,51 +67,65 @@
     <div class="row">
         <div class="col-md-12">
             <div class="post-container" th:each="post : ${posts}">
-                <!-- Display post image -->
-                <img alt="Post image" class="post-image" th:src="@{/post/image/{id}(id=${post.id})}">
-                <div class="post-content">
-                    <h2 th:text="${post.title}">Title</h2>
-                    <p th:text="${post.shortDescription}">Short Description</p>
-                    <p th:text="${#temporals.format(post.createdAt,'hh:mm:ss - dd/MM/yyyy')}">Creation Time</p>
-                    <div class="post-buttons">
-                        <a class="btn btn-primary" th:href="@{/post/{postId}(postId=${post.id})}">View</a>
-                        <!-- Show edit and delete options if the user is the owner -->
-                        <div th:if="${#authentication.name == post.ownerName}">
-                            <a class="btn btn-secondary" th:href="@{/post/{postId}/edit(postId=${post.id})}">Edit</a>
-                            <a class="btn btn-danger" th:href="@{/post/{postId}/delete(postId=${post.id})}">Delete</a>
-                        </div>
-                    </div>
+                <!-- Display post image centered at the top -->
+                <div class="post-image-container">
+                    <img alt="Post image" class="post-image" th:src="@{/post/image/{id}(id=${post.id})}">
+                </div>
+                
+                <!-- Post title -->
+                <h2 class="post-title" th:text="${post.title}">Title</h2>
+                
+                <!-- Post description -->
+                <p class="post-description" th:text="${post.shortDescription}">Short Description</p>
+                
+                <!-- Post author -->
+                <div class="post-metadata">
+                    <span>By </span>
+                    <a class="post-author" th:href="@{/user/{userId}(userId=${post.ownerId})}" th:text="${post.ownerName}">Author</a>
+                    <span> - </span>
+                    <span th:text="${#temporals.format(post.createdAt, 'MMM dd, yyyy HH:mm')}">Creation Time</span>
+                </div>
+                
+                <!-- Newest comment (if available) -->
+                <div class="post-comment" th:if="${post.newestComment != null}">
+                    <div class="comment-author" th:text="${post.newestComment.ownerName}">Comment Author</div>
+                    <div th:text="${post.newestComment.content}">Comment content goes here</div>
+                </div>
+                
+                <!-- View button only -->
+                <div class="post-buttons">
+                    <a class="btn btn-primary" th:href="@{/post/{postId}(postId=${post.id})}">View Post</a>
                 </div>
             </div>
         </div>
     </div>
-
     <!-- Pagination controls -->
     <nav aria-label="Page navigation">
-        <ul class="pagination">
-            <li class="page-item" th:classappend="${currentPage == 1}? 'disabled'">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
                 <a class="page-link" th:href="@{/(page=1)}">First</a>
             </li>
-            <li class="page-item" th:classappend="${currentPage == 1}? 'disabled'">
-                <a aria-label="Previous" class="page-link" th:href="@{/(page=${currentPage - 1})}">
+            <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                <a aria-label="Previous" class="page-link" 
+                   th:href="${currentPage > 1} ? @{/(page=${currentPage - 1})} : '#'">
                     <span aria-hidden="true">&laquo;</span>
                 </a>
             </li>
-            <li class="page-item" th:classappend="${i == currentPage}? 'active'"
-                th:each="i : ${#numbers.sequence(1, totalPages)}">
+            <li class="page-item" th:classappend="${i == currentPage} ? 'active'"
+                th:each="i : ${totalPages > 0 ? #numbers.sequence(1, totalPages) : #numbers.sequence(1, 1)}">
                 <a class="page-link" th:href="@{/(page=${i})}" th:text="${i}"></a>
             </li>
-            <li class="page-item" th:classappend="${currentPage == totalPages}? 'disabled'">
-                <a aria-label="Next" class="page-link" th:href="@{/(page=${currentPage + 1})}">
+            <li class="page-item" th:classappend="${currentPage == totalPages || totalPages == 0} ? 'disabled'">
+                <a aria-label="Next" class="page-link" 
+                   th:href="${currentPage < totalPages} ? @{/(page=${currentPage + 1})} : '#'">
                     <span aria-hidden="true">&raquo;</span>
                 </a>
             </li>
-            <li class="page-item" th:classappend="${currentPage == totalPages}? 'disabled'">
-                <a class="page-link" th:href="@{/(page=${totalPages})}">Last</a>
+            <li class="page-item" th:classappend="${currentPage == totalPages || totalPages == 0} ? 'disabled'">
+                <a class="page-link" th:href="${totalPages > 0} ? @{/(page=${totalPages})} : @{/(page=1)}">Last</a>
             </li>
         </ul>
     </nav>
-
 </div>
 <script src="/js/bootstrap.bundle.min.js"></script>
 </body>
