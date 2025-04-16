@@ -15,26 +15,28 @@ import java.util.stream.Collectors;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private final UserRepository userRepository;
+    private final UserRepository accountRepository;
 
-    public UserDetailsServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserDetailsServiceImpl(UserRepository accountRepository) {
+        this.accountRepository = accountRepository;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username);
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found");
+        User account = accountRepository.findByUsername(username);
+        if (account == null) {
+            throw new UsernameNotFoundException("Account not found");
         }
+        
         // Convert user roles to GrantedAuthorities
-        Collection<? extends GrantedAuthority> authorities = user.getRoles()
-                                                                 .stream()
-                                                                 .map(role -> new SimpleGrantedAuthority(role.getName()))
-                                                                 .collect(Collectors.toList());
-        return new org.springframework.security.core.userdetails.User(user.getUsername(),
-                                                                      user.getPassword(),
-                                                                      authorities);
+        Collection<? extends GrantedAuthority> authorities = account.getRoles()
+                .stream()
+                .map(role -> new SimpleGrantedAuthority(role.getName()))
+                .collect(Collectors.toList());
+                
+        return new org.springframework.security.core.userdetails.User(
+                account.getUsername(),
+                account.getPassword(),
+                authorities);
     }
-
 }

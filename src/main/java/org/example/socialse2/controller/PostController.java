@@ -27,153 +27,176 @@ import java.security.Principal;
 public class PostController {
 
     private static final Logger log = LoggerFactory.getLogger(PostController.class);
-    private final PostService postService;
-    private final CommentService commentService;
-    private final UserService userService;
+    private static final String ERROR_ACCESS_DENIED = "error/access_denied";
+    
+    private final PostService contentService;
+    private final CommentService feedbackService;
+    private final UserService accountService;
 
-    public PostController(PostService postService, CommentService commentService, UserService userService) {
-        this.postService = postService;
-        this.commentService = commentService;
-        this.userService = userService;
+    public PostController(PostService contentService, CommentService feedbackService, UserService accountService) {
+        this.contentService = contentService;
+        this.feedbackService = feedbackService;
+        this.accountService = accountService;
     }
 
     @GetMapping("/create")
-    public String newPostForm(Model model) {
-        PostDto postDto = new PostDto();
-        model.addAttribute("postDto", postDto);
+    public String showCreateContentForm(Model model) {
+        model.addAttribute("postDto", new PostDto());
         return "post/create";
     }
 
     @PostMapping("/create")
-    public String createPost(
+    public String publishNewContent(
             @Valid @ModelAttribute("postDto") PostDto postDto,
             BindingResult bindingResult,
             Model model,
             Principal principal) throws IOException {
             
-        if (SecurityUtil.isNotAuthenticated(principal)) {
-            return "error/access_denied";
+        if (principal == null) {
+            return ERROR_ACCESS_DENIED;
         }
         
         if (bindingResult.hasErrors()) {
             model.addAttribute("postDto", postDto);
-            log.error(bindingResult.getAllErrors().toString());
+            log.error("Validation errors during content creation: {}", bindingResult.getAllErrors());
             return "post/create";
         }
         
-        FileUtil.processPostImage(postDto);
-        postService.createPost(postDto);
-        log.info("Post created: {}", postDto);
+        processContentImage(postDto);
+        contentService.createNewPost(postDto);
+        log.info("New content published successfully: {}", postDto.getTitle());
         
-        return userService.isAdmin(principal.getName()) ? "redirect:/admin/posts" : "redirect:/";
+        return redirectBasedOnRole(principal.getName());
     }
 
     @GetMapping("/{postId}/edit")
-    public String editPostForm(@PathVariable Long postId, Model model, Principal principal) {
-        if (SecurityUtil.isNotAuthenticated(principal) || 
-            !hasAccessToPost(principal.getName(), postId)) {
-            return "error/access_denied";
+    public String showEditContentForm(@PathVariable Long postId, Model model, Principal principal) {
+        if (principal == null) {
+            return ERROR_ACCESS_DENIED;
         }
         
-        PostDto postDto = postService.getPost(postId);
-        model.addAttribute("postDto", postDto);
-        return "post/edit";
+        String username = principal.getName();
+        if (accountService.hasAdminPrivileges(username) || accountService.isPostCreator(username, postId)) {
+            model.addAttribute("postDto", contentService.retrievePostById(postId));
+            return "post/edit";
+        }
+        
+        return ERROR_ACCESS_DENIED;
     }
 
     @PostMapping("/{postId}/edit")
-    public String editPost(
+    public String updateExistingContent(
             @PathVariable Long postId,
             @Valid @ModelAttribute("postDto") PostDto postDto,
             BindingResult bindingResult,
             Model model,
             Principal principal) throws IOException {
             
-        if (SecurityUtil.isNotAuthenticated(principal) || 
-            !hasAccessToPost(principal.getName(), postId)) {
-            return "error/access_denied";
+        if (principal == null) {
+            return ERROR_ACCESS_DENIED;
         }
         
         if (bindingResult.hasErrors()) {
             model.addAttribute("postDto", postDto);
-            log.error(bindingResult.getAllErrors().toString());
+            log.error("Validation errors during content update: {}", bindingResult.getAllErrors());
             return "post/edit";
         }
         
-        FileUtil.processPostImage(postDto);
-        postService.updatePost(postDto);
-        log.info("Post updated: {}", postDto);
+        processContentImage(postDto);
+        contentService.updateExistingPost(postDto);
+        log.info("Content updated successfully: {}", postDto.getTitle());
         
-        return userService.isAdmin(principal.getName()) ? "redirect:/admin/posts" : "redirect:/";
+        return redirectBasedOnRole(principal.getName());
     }
 
     @GetMapping("/{postId}/delete")
-    public String deletePost(@PathVariable Long postId, Principal principal) {
-        if (SecurityUtil.isNotAuthenticated(principal) || 
-            !hasAccessToPost(principal.getName(), postId)) {
-            return "error/access_denied";
+    public String removeContent(@PathVariable Long postId, Principal principal) {
+        if (principal == null) {
+            return ERROR_ACCESS_DENIED;
         }
         
-        postService.deletePost(postId);
-        boolean isAdmin = userService.isAdmin(principal.getName());
-        return isAdmin ? "redirect:/admin/posts" : "redirect:/";
+        String username = principal.getName();
+        boolean isAdmin = accountService.hasAdminPrivileges(username);
+        boolean isOwner = accountService.isPostCreator(username, postId);
+        
+        if (isAdmin || isOwner) {
+            contentService.removePost(postId);
+            log.info("Content with ID {} removed by {}", postId, username);
+            return isAdmin ? "redirect:/admin/posts" : "redirect:/";
+        }
+        
+        return ERROR_ACCESS_DENIED;
     }
 
     @GetMapping("/{postId}")
-    public String viewPost(@PathVariable Long postId, Model model) {
-        PostDto postDto = postService.getPost(postId);
+    public String viewContentDetails(@PathVariable Long postId, Model model) {
+        PostDto postDto = contentService.retrievePostById(postId);
         model.addAttribute("postDto", postDto);
+        model.addAttribute("postId", postId);
         model.addAttribute("commentDto", new CommentDto());
-        model.addAttribute("comments", commentService.getComments(postId));
+        model.addAttribute("comments", feedbackService.retrieveCommentsByPostId(postId));
         return "post/view";
     }
 
     @PostMapping("/{postId}/comment")
-    public String addComment(
+    public String submitFeedback(
             @PathVariable Long postId,
             @ModelAttribute("commentDto") CommentDto commentDto,
             Principal principal) {
             
-        if (SecurityUtil.isNotAuthenticated(principal)) {
-            return "error/access_denied";
+        if (principal == null) {
+            return ERROR_ACCESS_DENIED;
         }
         
-        commentService.addComment(postId, commentDto);
+        feedbackService.createNewComment(postId, commentDto);
+        log.info("Feedback added to content ID {} by {}", postId, principal.getName());
         return "redirect:/post/{postId}";
     }
 
     @GetMapping("/{postId}/comment/{commentId}/delete")
-    public String deleteComment(
+    public String removeFeedback(
             @PathVariable Long postId, 
             @PathVariable Long commentId, 
             Principal principal) {
             
-        if (SecurityUtil.isNotAuthenticated(principal)) {
-            return "error/access_denied";
+        if (principal == null) {
+            return ERROR_ACCESS_DENIED;
         }
         
-        Comment comment = commentService.getById(commentId);
+        Comment comment = feedbackService.retrieveCommentById(commentId);
         String commentOwner = comment.getUser().getUsername();
         
-        if (!commentOwner.equals(principal.getName()) && 
-            !userService.isAdmin(principal.getName())) {
-            return "error/access_denied";
+        if (!commentOwner.equals(principal.getName()) && !accountService.hasAdminPrivileges(principal.getName())) {
+            return ERROR_ACCESS_DENIED;
         }
         
-        commentService.deleteComment(commentId);
+        feedbackService.removeComment(commentId);
+        log.info("Feedback ID {} removed from content ID {} by {}", commentId, postId, principal.getName());
         return "redirect:/post/" + postId;
     }
 
     @GetMapping("/image/{id}")
-    public ResponseEntity<byte[]> getImage(@PathVariable Long id) {
-        PostDto postDto = postService.getPost(id);
+    public ResponseEntity<byte[]> retrieveContentImage(@PathVariable Long id) {
+        PostDto postDto = contentService.retrievePostById(id);
         byte[] image = postDto.getImage();
+        
+        if (image == null || image.length == 0) {
+            return ResponseEntity.notFound().build();
+        }
+        
         return ResponseEntity.ok()
-            .header(HttpHeaders.CONTENT_TYPE, MediaType.IMAGE_JPEG_VALUE)
-            .body(image);
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.IMAGE_JPEG_VALUE)
+                .body(image);
     }
     
-    // Helper method to check if user has access to a post
-    private boolean hasAccessToPost(String username, Long postId) {
-        return userService.isAdmin(username) || userService.isOwnerOfPost(username, postId);
+    // Helper methods
+    private void processContentImage(PostDto postDto) throws IOException {
+        if (postDto.getImageFile() != null && !postDto.getImageFile().isEmpty()) {
+            postDto.setImage(postDto.getImageFile().getBytes());
+        }
+    }
+    
+    private String redirectBasedOnRole(String username) {
+        return accountService.hasAdminPrivileges(username) ? "redirect:/admin/posts" : "redirect:/";
     }
 }

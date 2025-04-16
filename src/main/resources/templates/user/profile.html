@@ -33,6 +33,42 @@
             </div>
         </div>
     </div>
+
+    <!-- Recent Posts Section -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3>Recent Posts</h3>
+            <div class="table-responsive" th:if="${recentPosts != null && !recentPosts.empty}">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Title</th>
+                            <th>Number of Comments</th>
+                            <th>Created At</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="post, postStat : ${recentPosts}">
+                            <td th:text="${postStat.count}">1</td>
+                            <td>
+                                <div class="text-truncate" style="max-width: 250px;" th:text="${post.title}">Post Title</div>
+                            </td>
+                            <td th:text="${post.commentCount}">0</td>
+                            <td th:text="${#temporals.format(post.createdAt, 'dd/MM/yyyy HH:mm')}">Creation Date</td>
+                            <td>
+                                <a class="btn btn-sm btn-primary" th:href="@{/post/{postId}(postId=${post.id})}">View</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div th:if="${recentPosts == null || recentPosts.empty}" class="alert alert-info">
+                This user hasn't created any posts yet.
+            </div>
+        </div>
+    </div>
 </div>
 <script src="/js/bootstrap.bundle.min.js"></script>
 </body>
