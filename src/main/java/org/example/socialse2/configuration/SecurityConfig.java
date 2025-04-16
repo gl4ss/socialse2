@@ -30,19 +30,21 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
-            .authorizeHttpRequests(request -> request.requestMatchers("/admin/**")
-                                                     .hasRole("ADMIN")
-                                                     .anyRequest()
-                                                     .permitAll())
-            .formLogin(form -> form.loginPage("/login")
-                                   .loginProcessingUrl("/login")
-                                   .successHandler(loginSuccessHandler)
-                                   .permitAll())
-            .logout(logout -> logout.invalidateHttpSession(true)
-                                    .clearAuthentication(true)
-                                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                                    .logoutSuccessUrl("/")
-                                    .permitAll());
+                .authorizeHttpRequests(request -> request.requestMatchers("/admin/**")
+                .hasRole("ADMIN")
+                .anyRequest()
+                .permitAll())
+                .exceptionHandling(exception -> exception
+                .accessDeniedPage("/error/access_denied"))
+                .formLogin(form -> form.loginPage("/login")
+                .loginProcessingUrl("/login")
+                .successHandler(loginSuccessHandler)
+                .permitAll())
+                .logout(logout -> logout.invalidateHttpSession(true)
+                .clearAuthentication(true)
+                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                .logoutSuccessUrl("/")
+                .permitAll());
         return http.build();
     }
 

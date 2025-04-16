@@ -7,6 +7,7 @@ import org.example.socialse2.mapper.UserMapper;
 import org.example.socialse2.model.Post;
 import org.example.socialse2.model.Role;
 import org.example.socialse2.model.User;
+import org.example.socialse2.repository.CommentRepository;
 import org.example.socialse2.repository.PostRepository;
 import org.example.socialse2.repository.RoleRepository;
 import org.example.socialse2.repository.UserRepository;
@@ -34,15 +35,18 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
 
     public UserServiceImpl(UserRepository userRepository,
                            RoleRepository roleRepository,
                            PasswordEncoder passwordEncoder,
-                           PostRepository postRepository) {
+                           PostRepository postRepository,
+                           CommentRepository commentRepository) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.postRepository = postRepository;
+        this.commentRepository = commentRepository;
     }
 
     @Transactional
@@ -155,9 +159,25 @@ public class UserServiceImpl implements UserService {
         User userToDelete = retrieveUserById(id);
         
         if (currentUser.getId().equals(userToDelete.getId()) || hasAdminPrivileges(currentUser.getUsername())) {
-            // Remove the association between the User and the Role
-            userToDelete.setRoles(null);
+            // Clear the roles collection properly to avoid any JPA relationship issues
+            userToDelete.getRoles().clear();
             userRepository.save(userToDelete);
+            
+            // First delete comments made by the user on other users' posts
+            commentRepository.deleteByUserId(userToDelete.getId());
+            
+            // Now handle posts - use the repository to delete them as this ensures they're attached to the session
+            if (userToDelete.getPosts() != null && !userToDelete.getPosts().isEmpty()) {
+                List<Long> postIds = userToDelete.getPosts().stream()
+                    .map(Post::getId)
+                    .collect(Collectors.toList());
+                
+                for (Long postId : postIds) {
+                    // This ensures we're working with attached entities
+                    postRepository.findById(postId).ifPresent(postRepository::delete);
+                }
+            }
+            
             // Now delete the User
             userRepository.delete(userToDelete);
         } else {

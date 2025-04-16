@@ -7,78 +7,116 @@
     <link href="/css/view-post.css" rel="stylesheet">
     <link href="/css/header.css" rel="stylesheet">
     <style>
+        :root {
+            --bg-white: #ffffff;
+            --bg-light: #f8f9fa;
+            --text-dark: #333333;
+            --text-muted: #6c757d;
+            --primary-color: #0d6efd;
+            --primary-hover: #0b5ed7;
+            --danger-color: #dc3545;
+            --secondary-color: #6c757d;
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: var(--bg-light);
+        }
+
+        .container {
+            flex: 1;
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+
         .post-body-card {
-            background-color: var(--bg-component);
+            background-color: var(--bg-white);
             border-radius: 12px;
             box-shadow: var(--shadow-md);
             padding: 2rem;
             margin-bottom: 2rem;
-            transition: transform 0.3s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
+
         .post-body-card:hover {
             transform: translateY(-5px);
             box-shadow: var(--shadow-lg);
-            background-color: var(--bg-component-hover);
         }
+
         .post-title {
-            margin-bottom: 1rem;
             color: var(--text-dark);
+            margin-bottom: 1rem;
             border-bottom: 2px solid var(--primary-color);
             padding-bottom: 0.5rem;
             display: inline-block;
         }
+
         .post-short-description {
-            color: var(--text-light);
+            color: var(--text-muted);
             font-style: italic;
         }
+
         .post-image {
-            max-height: 400px;
-            object-fit: contain;
+            max-width: 100%;
+            height: auto;
             border-radius: 8px;
-            display: block;
-            margin: 0 auto;
+            margin: 1rem 0;
             box-shadow: var(--shadow-sm);
         }
+
         .post-content {
-            line-height: 1.6;
+            line-height: 1.8;
             color: var(--text-dark);
-            background-color: #fff;
+            background-color: var(--bg-white);
             padding: 1.5rem;
             border-radius: 8px;
             margin: 1.5rem 0;
         }
+
         .post-meta {
+            color: var(--text-muted);
             font-size: 0.9rem;
-            color: var(--text-light);
             padding: 1rem;
-            background-color: var(--bg-grey);
+            background-color: var(--bg-light);
             border-radius: 8px;
             box-shadow: var(--shadow-sm);
         }
+
         .comments-section {
+            background-color: var(--bg-white);
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
+            padding: 2rem;
             margin-top: 2rem;
-            padding: 1.5rem;
-            background-color: var(--bg-grey);
-            border-radius: 8px;
         }
+
         .comment-box {
             padding: 1rem;
             border-left: 3px solid var(--primary-color);
-            background-color: #fff;
+            background-color: var(--bg-light);
             margin-bottom: 1rem;
             border-radius: 0 8px 8px 0;
             transition: transform 0.2s ease;
             box-shadow: var(--shadow-sm);
         }
+
         .comment-box:hover {
             transform: translateX(5px);
         }
+
         .comment-form {
-            background-color: var(--bg-grey);
+            margin-top: 2rem;
+            background-color: var(--bg-light);
             padding: 1.5rem;
             border-radius: 8px;
             box-shadow: var(--shadow-sm);
         }
+
         .btn-submit {
             background-color: var(--primary-color);
             color: white;
@@ -87,10 +125,11 @@
             padding: 0.5rem 1rem;
             transition: all 0.3s ease;
         }
+
         .btn-submit:hover {
             background-color: var(--primary-hover);
             transform: translateY(-2px);
-            box-shadow: 0 3px 6px rgba(13, 110, 253, 0.2);
+            box-shadow: var(--shadow-sm);
         }
     </style>
 </head>
@@ -143,7 +182,6 @@
     </div>
 </div>
 
-<footer th:replace="~{fragments :: footer}"></footer>
 <script src="/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

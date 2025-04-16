@@ -62,7 +62,6 @@
 <div class="container mt-5">
     <div class="search-container">
         <h1 class="search-title">Search Results</h1>
-        <!-- Users Found Section -->
         <div class="mb-4">
             <h2 class="section-title">Users Found</h2>
             <div th:if="${users != null && !users.isEmpty()}">
@@ -77,7 +76,6 @@
             </div>
         </div>
         
-        <!-- Posts Found Section -->
         <div>
             <h2 class="section-title">Posts Found</h2>
             <div th:if="${posts != null && !posts.isEmpty()}">
@@ -94,7 +92,6 @@
     </div>
 </div>
 
-<footer th:replace="~{fragments :: footer}"></footer>
 <script src="/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

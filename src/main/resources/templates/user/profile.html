@@ -7,6 +7,30 @@
     <link href="/css/user-profile.css" rel="stylesheet">
     <link href="/css/header.css" rel="stylesheet">
     <style>
+        :root {
+            --bg-white: #ffffff;
+            --bg-light: #f8f9fa;
+            --text-dark: #333333;
+            --primary-color: #0d6efd;
+            --primary-hover: #0b5ed7;
+            --danger-color: #dc3545;
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        .container {
+            flex: 1;
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+        
         .profile-container {
             background-color: var(--bg-white);
             border-radius: 12px;
@@ -15,10 +39,12 @@
             margin-bottom: 2rem;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
+        
         .profile-container:hover {
             transform: translateY(-5px);
             box-shadow: var(--shadow-lg);
         }
+        
         .profile-title {
             margin-bottom: 1.5rem;
             color: var(--text-dark);
@@ -26,6 +52,7 @@
             padding-bottom: 0.5rem;
             display: inline-block;
         }
+        
         .profile-image {
             width: 150px;
             height: 150px;
@@ -34,23 +61,28 @@
             border: 3px solid var(--primary-color);
             box-shadow: var(--shadow-sm);
         }
+        
         .profile-card {
             padding: 1.5rem;
             background-color: var(--bg-light);
             border-radius: 8px;
         }
+        
         .profile-card p {
             margin-bottom: 0.8rem;
             color: var(--text-dark);
         }
+        
         .posts-table {
             box-shadow: var(--shadow-sm);
             border-radius: 8px;
             overflow: hidden;
         }
+        
         .posts-table th {
             background-color: var(--bg-light);
         }
+        
         .section-title {
             margin-bottom: 1.5rem;
             color: var(--text-dark);
@@ -58,21 +90,26 @@
             padding-bottom: 0.5rem;
             display: inline-block;
         }
+        
         .btn-action {
             margin-right: 5px;
         }
+        
         .btn-primary {
             background-color: var(--primary-color);
             border-color: var(--primary-color);
         }
+        
         .btn-primary:hover {
             background-color: var(--primary-hover);
             border-color: var(--primary-hover);
         }
+        
         .btn-danger {
             background-color: var(--danger-color);
             border-color: var(--danger-color);
         }
+        
         .alert-info {
             background-color: var(--bg-light);
             color: var(--text-dark);
@@ -146,7 +183,6 @@
     </div>
 </div>
 
-<footer th:replace="~{fragments :: footer}"></footer>
 <script src="/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
