@@ -1,6 +1,10 @@
 package org.example.socialse2.service.impl;
 
-import jakarta.persistence.EntityNotFoundException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 import org.example.socialse2.dto.RegistrationDto;
 import org.example.socialse2.dto.UserDto;
 import org.example.socialse2.mapper.UserMapper;
@@ -20,17 +24,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     private static final String ROLE_USER = "ROLE_USER";
     private static final String ROLE_ADMIN = "ROLE_ADMIN";
-    
+
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
@@ -38,10 +39,10 @@ public class UserServiceImpl implements UserService {
     private final CommentRepository commentRepository;
 
     public UserServiceImpl(UserRepository userRepository,
-                           RoleRepository roleRepository,
-                           PasswordEncoder passwordEncoder,
-                           PostRepository postRepository,
-                           CommentRepository commentRepository) {
+            RoleRepository roleRepository,
+            PasswordEncoder passwordEncoder,
+            PostRepository postRepository,
+            CommentRepository commentRepository) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
@@ -58,10 +59,10 @@ public class UserServiceImpl implements UserService {
         user.setEmail(registrationDto.getEmail());
         user.setUsername(registrationDto.getUsername());
         user.setPassword(passwordEncoder.encode(registrationDto.getPassword()));
-        
+
         Role defaultRole = getOrCreateRole(ROLE_USER);
         user.setRoles(Collections.singleton(defaultRole));
-        
+
         userRepository.save(user);
     }
 
@@ -80,7 +81,7 @@ public class UserServiceImpl implements UserService {
             userRepository.save(user);
         }
     }
-    
+
     private Role getOrCreateRole(String roleName) {
         Role role = roleRepository.findByName(roleName);
         if (role == null) {
@@ -111,7 +112,7 @@ public class UserServiceImpl implements UserService {
     public void modifyUserProfile(UserDto userDto) {
         User existingUser = userRepository.findById(userDto.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Account with ID " + userDto.getId() + " not found in system"));
-                
+
         existingUser.setFirstName(userDto.getFirstName());
         existingUser.setLastName(userDto.getLastName());
         existingUser.setEmail(userDto.getEmail());
@@ -120,11 +121,11 @@ public class UserServiceImpl implements UserService {
         existingUser.setBio(userDto.getBio());
         existingUser.setWebsite(userDto.getWebsite());
         existingUser.setDateOfBirth(userDto.getDateOfBirth());
-        
+
         if (userDto.getPassword() != null) {
             existingUser.setPassword(passwordEncoder.encode(userDto.getPassword()));
         }
-        
+
         userRepository.save(existingUser);
     }
 
@@ -134,7 +135,7 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             throw new EntityNotFoundException("User with username " + username + " not found in system");
         }
-        
+
         return user.getRoles().stream()
                 .anyMatch(role -> role.getName().equalsIgnoreCase(ROLE_ADMIN));
     }
@@ -145,10 +146,10 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             throw new EntityNotFoundException("User with username " + username + " not found in system");
         }
-        
+
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new EntityNotFoundException("Content with ID " + postId + " not found in system"));
-                
+
         return post.getUser().getUsername().equals(username);
     }
 
@@ -157,27 +158,27 @@ public class UserServiceImpl implements UserService {
     public void removeUserAccount(Long id) {
         User currentUser = retrieveCurrentAuthenticatedUser();
         User userToDelete = retrieveUserById(id);
-        
+
         if (currentUser.getId().equals(userToDelete.getId()) || hasAdminPrivileges(currentUser.getUsername())) {
             // Clear the roles collection properly to avoid any JPA relationship issues
             userToDelete.getRoles().clear();
             userRepository.save(userToDelete);
-            
+
             // First delete comments made by the user on other users' posts
             commentRepository.deleteByUserId(userToDelete.getId());
-            
+
             // Now handle posts - use the repository to delete them as this ensures they're attached to the session
             if (userToDelete.getPosts() != null && !userToDelete.getPosts().isEmpty()) {
                 List<Long> postIds = userToDelete.getPosts().stream()
-                    .map(Post::getId)
-                    .collect(Collectors.toList());
-                
+                        .map(Post::getId)
+                        .collect(Collectors.toList());
+
                 for (Long postId : postIds) {
                     // This ensures we're working with attached entities
                     postRepository.findById(postId).ifPresent(postRepository::delete);
                 }
             }
-            
+
             // Now delete the User
             userRepository.delete(userToDelete);
         } else {
