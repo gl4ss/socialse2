@@ -2,47 +2,91 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Admin - Edit Post</title>
+    <title>Edit Post</title>
     <!-- Include local Bootstrap 5 CSS -->
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/header.css" rel="stylesheet">
     <link href="/css/edit-post.css" rel="stylesheet">
     <script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script>
+    <style>
+        .form-wrapper {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 2rem;
+        }
+        .form-title {
+            margin-bottom: 1.5rem;
+            color: #333;
+            border-bottom: 2px solid #0d6efd;
+            padding-bottom: 0.5rem;
+            display: inline-block;
+        }
+        .custom-input, .custom-textarea {
+            border-radius: 5px;
+            border: 1px solid #ced4da;
+            padding: 0.5rem;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+        .custom-input:focus, .custom-textarea:focus {
+            border-color: #86b7fe;
+            outline: 0;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+        .btn-submit {
+            background-color: #0d6efd;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 0.5rem 1rem;
+            transition: background-color 0.15s ease-in-out;
+        }
+        .btn-submit:hover {
+            background-color: #0b5ed7;
+        }
+    </style>
 </head>
 <body>
 <header th:replace="~{fragments :: header}"></header>
 <div class="container mt-5">
-    <form enctype="multipart/form-data" method="post" role="form"
-          th:action="@{/post/{postId}/edit(postId=${postDto.id})}" th:object="${postDto}">
-        <h1>Edit Post</h1>
-        <input th:field="*{id}" type="hidden">
-        <input th:field="*{createdAt}" type="hidden">
-        <input th:field="*{ownerId}" type="hidden">
-        <div class="mb-3">
-            <label class="form-label" for="title">Title:</label>
-            <input class="form-control" id="title" th:field="*{title}" type="text">
-            <div class="text-danger" th:errors="*{title}" th:if="${#fields.hasErrors('title')}"></div>
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="form-wrapper">
+                <h1 class="form-title">Edit Post</h1>
+                <form enctype="multipart/form-data" method="post" role="form"
+                    th:action="@{/post/{postId}/edit(postId=${postDto.id})}" th:object="${postDto}">
+                    <input th:field="*{id}" type="hidden">
+                    <input th:field="*{createdAt}" type="hidden">
+                    <input th:field="*{ownerId}" type="hidden">
+                    <div class="mb-3">
+                        <label class="form-label" for="title">Title:</label>
+                        <input class="form-control custom-input" id="title" th:field="*{title}" type="text">
+                        <div class="text-danger" th:errors="*{title}" th:if="${#fields.hasErrors('title')}"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="shortDescription">Short Description:</label>
+                        <input class="form-control custom-input" id="shortDescription" th:field="*{shortDescription}" type="text">
+                        <div class="text-danger" th:errors="*{shortDescription}"
+                            th:if="${#fields.hasErrors('shortDescription')}"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="content">Content:</label>
+                        <textarea class="form-control custom-textarea" id="content" th:field="*{content}"></textarea>
+                        <div class="text-danger" th:errors="*{content}" th:if="${#fields.hasErrors('content')}"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="image">Upload Image:</label>
+                        <input class="form-control custom-input" id="image" name="imageFile" th:field="*{imageFile}" type="file">
+                        <div class="text-danger" th:errors="*{imageFile}" th:if="${#fields.hasErrors('imageFile')}"></div>
+                    </div>
+                    <button class="btn btn-submit" type="submit">Submit</button>
+                </form>
+            </div>
         </div>
-        <div class="mb-3">
-            <label class="form-label" for="shortDescription">Short Description:</label>
-            <input class="form-control" id="shortDescription" th:field="*{shortDescription}" type="text">
-            <div class="text-danger" th:errors="*{shortDescription}"
-                 th:if="${#fields.hasErrors('shortDescription')}"></div>
-        </div>
-        <div class="mb-3">
-            <label class="form-label" for="content">Content:</label>
-            <textarea class="form-control" id="content" th:field="*{content}"></textarea>
-            <div class="text-danger" th:errors="*{content}" th:if="${#fields.hasErrors('content')}"></div>
-        </div>
-        <div class="mb-3">
-            <label class="form-label" for="image">Upload Image:</label>
-            <input class="form-control" id="image" name="imageFile" th:field="*{imageFile}" type="file">
-            <div class="text-danger" th:errors="*{imageFile}" th:if="${#fields.hasErrors('imageFile')}"></div>
-        </div>
-        <button class="btn btn-primary" type="submit">Submit</button>
-    </form>
+    </div>
 </div>
 
+<footer th:replace="~{fragments :: footer}"></footer>
 <script>
     ClassicEditor
         .create(document.querySelector('#content'))

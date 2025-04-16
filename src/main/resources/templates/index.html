@@ -6,103 +6,209 @@
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/home.css" rel="stylesheet">
     <link href="/css/header.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <style>
-        /* Updated styling for new post layout */
+        :root {
+            --primary-color: #0d6efd;
+            --primary-hover: #0b5ed7;
+            --text-dark: #2c3e50;
+            --text-light: #6c757d;
+            --bg-light: #f8f9fa;
+            --shadow-sm: 0 2px 10px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.1);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+            --bg-component: #e9ecef;
+            --bg-component-hover: #dee2e6;
+            --bg-grey: #f1f3f5;
+            --border-color: #ced4da;
+        }
+        
         .post-container {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border: none;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 35px;
+            box-shadow: var(--shadow-md);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background-color: var(--bg-component);
+            display: flex;
+            flex-direction: column;
+        }
+        .post-container:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            background-color: var(--bg-component-hover);
         }
         .post-image-container {
             display: flex;
             justify-content: center;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            border-radius: 8px;
+            width: 100%;
         }
         .post-image {
-            max-width: 100%;
-            max-height: 250px;
+            width: 100%;
+            height: 300px;
             object-fit: cover;
-            border-radius: 5px;
+            transition: transform 0.3s ease;
+        }
+        .post-image:hover {
+            transform: scale(1.02);
+        }
+        .post-title-link {
+            text-decoration: none;
+            display: block;
+            margin-bottom: 12px;
         }
         .post-title {
-            font-size: 1.5rem;
-            margin-bottom: 10px;
+            font-size: 1.75rem;
             text-align: center;
+            font-weight: 600;
+            color: var(--primary-color);
+            transition: color 0.2s ease;
+            margin: 0;
+        }
+        .post-title:hover {
+            color: var(--primary-hover);
+            text-decoration: underline;
         }
         .post-description {
-            color: #555;
-            margin-bottom: 15px;
+            color: var(--text-dark);
+            margin-bottom: 18px;
+            line-height: 1.6;
+            font-size: 1.1rem;
         }
         .post-metadata {
-            font-size: 0.9rem;
-            color: #666;
-            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            font-size: 0.95rem;
+            color: var(--text-light);
+            margin-top: auto;
+            border-top: 1px solid var(--border-color);
+            padding-top: 15px;
+            background-color: var(--bg-grey);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
         }
         .post-author {
-            font-weight: bold;
-        }
-        .post-comment {
-            background-color: #f9f9f9;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            border-left: 3px solid #0d6efd;
-        }
-        .comment-author {
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .post-buttons {
             display: flex;
-            justify-content: center;
+            align-items: center;
+        }
+        .author-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+        }
+        .author-name {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        .post-date {
+            display: flex;
+            align-items: center;
+        }
+        .time-icon {
+            margin-right: 5px;
+            color: var(--text-light);
+        }
+        .comment-count {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            color: var(--text-light);
+        }
+        .comment-icon {
+            margin-right: 5px;
+        }
+        .page-title {
+            position: relative;
+            margin-bottom: 2rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            display: inline-block;
+        }
+        .page-title:after {
+            content: '';
+            position: absolute;
+            width: 60%;
+            height: 3px;
+            background-color: var(--primary-color);
+            bottom: -10px;
+            left: 0;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            background-color: var(--bg-component);
+            border-radius: 12px;
+            margin: 30px 0;
+            box-shadow: var(--shadow-md);
         }
     </style>
 </head>
 <body>
 <header th:replace="~{fragments :: header}"></header>
 <div class="container mt-5">
-    <h1 class="mb-4">Home</h1>
+    <h1 class="page-title">Discover New Posts</h1>
+
+    <!-- Empty state if no posts -->
+    <div class="empty-state" th:if="${posts == null || posts.empty}">
+        <i class="fas fa-newspaper fa-3x mb-3" style="color: #6c757d;"></i>
+        <h3>No posts available yet</h3>
+        <p class="text-muted">Be the first to create a post and share your thoughts!</p>
+        <a class="btn btn-primary mt-2" th:href="@{/post/create}">Create Post</a>
+    </div>
 
     <!-- Iterate over each post -->
-    <div class="row">
+    <div class="row" th:if="${posts != null && !posts.empty}">
         <div class="col-md-12">
             <div class="post-container" th:each="post : ${posts}">
-                <!-- Display post image centered at the top -->
+                <!-- Display post image at the top -->
                 <div class="post-image-container">
                     <img alt="Post image" class="post-image" th:src="@{/post/image/{id}(id=${post.id})}">
                 </div>
                 
-                <!-- Post title -->
-                <h2 class="post-title" th:text="${post.title}">Title</h2>
+                <!-- Post title (clickable) -->
+                <a class="post-title-link" th:href="@{/post/{postId}(postId=${post.id})}">
+                    <h2 class="post-title" th:text="${post.title}">Title</h2>
+                </a>
                 
                 <!-- Post description -->
                 <p class="post-description" th:text="${post.shortDescription}">Short Description</p>
                 
-                <!-- Post author -->
+                <!-- Comment counter -->
+                <div class="comment-count">
+                    <i class="far fa-comment comment-icon"></i>
+                    <span th:text="${post.newestComment != null ? '1 comment' : 'No comments yet'}">Comments</span>
+                </div>
+                
+                <!-- Post metadata items in vertical layout -->
                 <div class="post-metadata">
-                    <span>By </span>
-                    <a class="post-author" th:href="@{/user/{userId}(userId=${post.ownerId})}" th:text="${post.ownerName}">Author</a>
-                    <span> - </span>
-                    <span th:text="${#temporals.format(post.createdAt, 'MMM dd, yyyy HH:mm')}">Creation Time</span>
-                </div>
-                
-                <!-- Newest comment (if available) -->
-                <div class="post-comment" th:if="${post.newestComment != null}">
-                    <div class="comment-author" th:text="${post.newestComment.ownerName}">Comment Author</div>
-                    <div th:text="${post.newestComment.content}">Comment content goes here</div>
-                </div>
-                
-                <!-- View button only -->
-                <div class="post-buttons">
-                    <a class="btn btn-primary" th:href="@{/post/{postId}(postId=${post.id})}">View Post</a>
+                    <!-- Author -->
+                    <div class="post-author">
+                        <img class="author-avatar" th:src="${'/user/image/' + post.ownerId}" 
+                             src="/images/Default_pfp.svg" alt="Author avatar">
+                        <span>By </span>
+                        <a class="author-name" th:href="@{/user/{userId}(userId=${post.ownerId})}" th:text="${post.ownerName}">Author</a>
+                    </div>
+                    
+                    <!-- Date -->
+                    <div class="post-date">
+                        <i class="far fa-clock time-icon"></i>
+                        <span th:text="${#temporals.format(post.createdAt, 'MMM dd, yyyy')}">Creation Time</span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+    
     <!-- Pagination controls -->
-    <nav aria-label="Page navigation">
+    <nav aria-label="Page navigation" th:if="${totalPages > 1}">
         <ul class="pagination justify-content-center">
             <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
                 <a class="page-link" th:href="@{/(page=1)}">First</a>
@@ -130,6 +236,7 @@
     </nav>
 </div>
 
+<footer th:replace="~{fragments :: footer}"></footer>
 <script src="/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

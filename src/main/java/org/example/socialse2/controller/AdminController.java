@@ -25,12 +25,12 @@ public class AdminController {
         this.accountService = accountService;
     }
 
-    @GetMapping("/admin")
+    @GetMapping("")
     public String redirectToAdminDashboard() {
         return "redirect:/admin/posts";
     }
 
-    @GetMapping("/admin/posts")
+    @GetMapping("/posts")
     public String manageContentPaginated(Model model, @RequestParam(defaultValue = "1") int page) {
         // Ensure page is at least 1
         int pageNumber = Math.max(1, page);
@@ -47,7 +47,7 @@ public class AdminController {
         return "admin/posts";
     }
 
-    @GetMapping("/admin/users")
+    @GetMapping("/users")
     public String manageUsersPaginated(
             @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(name = "size", defaultValue = "10") int size,

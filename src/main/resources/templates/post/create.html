@@ -2,44 +2,100 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Admin - Create Post</title>
+    <title>Create Post</title>
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/create-post.css" rel="stylesheet">
     <link href="/css/header.css" rel="stylesheet">
     <script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script>
+    <style>
+        .form-wrapper {
+            background-color: var(--bg-white);
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
+            padding: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .form-wrapper:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        .form-title {
+            margin-bottom: 1.5rem;
+            color: var(--text-dark);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 0.5rem;
+            display: inline-block;
+        }
+        .custom-input, .custom-textarea {
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            padding: 0.75rem;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+        .custom-input:focus, .custom-textarea:focus {
+            border-color: var(--primary-color);
+            outline: 0;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+        .btn-submit {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            transition: all 0.3s ease;
+        }
+        .btn-submit:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(13, 110, 253, 0.3);
+        }
+        /* CKEditor styling */
+        .ck-editor__editable {
+            min-height: 200px;
+            border-color: var(--border-color) !important;
+        }
+        .ck-editor__editable:focus {
+            border-color: var(--primary-color) !important;
+        }
+    </style>
 </head>
 <body>
 <header th:replace="~{fragments :: header}"></header>
-
-<div class="create-post-container">
-    <div class="form-wrapper">
-        <h1 class="form-title">Create Post</h1>
-        <form enctype="multipart/form-data" method="post" th:action="@{/post/create}" th:object="${postDto}">
-            <div class="mb-3">
-                <label class="form-label" for="title">Title:</label>
-                <input class="form-control custom-input" id="title" th:field="*{title}" type="text">
-                <div class="text-danger" th:errors="*{title}" th:if="${#fields.hasErrors('title')}"></div>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="form-wrapper">
+                <h1 class="form-title">Create Post</h1>
+                <form enctype="multipart/form-data" method="post" th:action="@{/post/create}" th:object="${postDto}">
+                    <div class="mb-3">
+                        <label class="form-label" for="title">Title:</label>
+                        <input class="form-control custom-input" id="title" th:field="*{title}" type="text">
+                        <div class="text-danger" th:errors="*{title}" th:if="${#fields.hasErrors('title')}"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="shortDescription">Short Description:</label>
+                        <input class="form-control custom-input" id="shortDescription" th:field="*{shortDescription}" type="text">
+                        <div class="text-danger" th:errors="*{shortDescription}" th:if="${#fields.hasErrors('shortDescription')}"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="content">Content:</label>
+                        <textarea class="form-control custom-textarea" id="content" th:field="*{content}"></textarea>
+                        <div class="text-danger" th:errors="*{content}" th:if="${#fields.hasErrors('content')}"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="image">Upload Image:</label>
+                        <input class="form-control custom-input" id="image" name="imageFile" th:field="*{imageFile}" type="file">
+                        <div class="text-danger" th:errors="*{imageFile}" th:if="${#fields.hasErrors('imageFile')}"></div>
+                    </div>
+                    <button class="btn btn-submit" type="submit">Submit</button>
+                </form>
             </div>
-            <div class="mb-3">
-                <label class="form-label" for="shortDescription">Short Description:</label>
-                <input class="form-control custom-input" id="shortDescription" th:field="*{shortDescription}" type="text">
-                <div class="text-danger" th:errors="*{shortDescription}" th:if="${#fields.hasErrors('shortDescription')}"></div>
-            </div>
-            <div class="mb-3">
-                <label class="form-label" for="content">Content:</label>
-                <textarea class="form-control custom-textarea" id="content" th:field="*{content}"></textarea>
-                <div class="text-danger" th:errors="*{content}" th:if="${#fields.hasErrors('content')}"></div>
-            </div>
-            <div class="mb-3">
-                <label class="form-label" for="image">Upload Image:</label>
-                <input class="form-control custom-input" id="image" name="imageFile" th:field="*{imageFile}" type="file">
-                <div class="text-danger" th:errors="*{imageFile}" th:if="${#fields.hasErrors('imageFile')}"></div>
-            </div>
-            <button class="btn btn-submit" type="submit">Submit</button>
-        </form>
+        </div>
     </div>
 </div>
 
+<footer th:replace="~{fragments :: footer}"></footer>
 <script>
     ClassicEditor
         .create(document.querySelector('#content'))
