@@ -1,0 +1,52 @@
+body {
+  background: linear-gradient(to bottom, #b2f1e4, #5c5470);
+  min-height: 100vh;
+  padding: 2rem;
+        }
+
+  .profile-card {
+            background-color: white;
+            border-radius: 25px;
+            padding: 2rem;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #000;
+            font-weight: bold;
+        }
+
+        p {
+            font-size: 1.1rem;
+        }
+
+        strong {
+            color: #000;
+            display: inline-block;
+            width: 150px;
+        }
+
+  .btn-primary {
+            background-color: #A0E8DD;
+            color: #000;
+            border: none;
+        }
+
+  .btn-primary:hover {
+            background-color: #8bd3c9;
+        }
+
+  .btn-danger {
+            margin-left: 10px;
+        }
+
+  .rounded-circle {
+            max-width: 200px;
+            height: auto;
+        }
+
+  @media (max-width: 768px) {
+            .profile-card {
+                margin-top: 1rem;
+            }
+        }

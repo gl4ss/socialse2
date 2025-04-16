@@ -2,46 +2,96 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Search</title>
+    <title>Search Results</title>
     <!-- Include local Bootstrap 5 CSS -->
     <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/header.css" rel="stylesheet">
+    <link href="/css/search-style.css" rel="stylesheet">
+    <style>
+        .search-container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        .search-title {
+            margin-bottom: 1.5rem;
+            color: #333;
+            border-bottom: 2px solid #0d6efd;
+            padding-bottom: 0.5rem;
+            display: inline-block;
+        }
+        .section-title {
+            margin-bottom: 1rem;
+            color: #333;
+            border-left: 3px solid #0d6efd;
+            padding-left: 0.5rem;
+        }
+        .search-list {
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .search-list-item {
+            border-left: 3px solid transparent;
+            transition: all 0.2s ease;
+        }
+        .search-list-item:hover {
+            border-left-color: #0d6efd;
+            background-color: #f8f9fa;
+        }
+        .search-link {
+            text-decoration: none;
+            color: #0d6efd;
+            display: block;
+            padding: 0.5rem 0;
+        }
+        .search-link:hover {
+            color: #0a58ca;
+        }
+        .empty-results {
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            color: #6c757d;
+        }
+    </style>
 </head>
 <body>
 <header th:replace="~{fragments :: header}"></header>
-
 <div class="container mt-5">
-    <h1 class="mb-4">Search Results</h1>
-
-    <!-- Users Found Section -->
-    <div>
-        <h2>Users Found</h2>
-        <div th:if="${users}">
-            <ul class="list-group">
-                <li class="list-group-item" th:each="user : ${users}">
-                    <a th:href="@{/user/{userId}(userId=${user.id})}" th:text="${user.username}"></a>
-                </li>
-            </ul>
+    <div class="search-container">
+        <h1 class="search-title">Search Results</h1>
+        <div class="mb-4">
+            <h2 class="section-title">Users Found</h2>
+            <div th:if="${users != null && !users.isEmpty()}">
+                <ul class="list-group search-list">
+                    <li class="list-group-item search-list-item" th:each="user : ${users}">
+                        <a class="search-link" th:href="@{/user/{userId}(userId=${user.id})}" th:text="${user.username}"></a>
+                    </li>
+                </ul>
+            </div>
+            <div class="empty-results" th:if="${users == null || users.isEmpty()}">
+                <p class="mb-0">No users found matching your search.</p>
+            </div>
         </div>
-        <div th:if="${users.isEmpty()}">
-            <p class="text-muted">No users found.</p>
-        </div>
-    </div>
-
-    <!-- Posts Found Section -->
-    <div>
-        <h2>Posts Found</h2>
-        <div th:if="${posts}">
-            <ul class="list-group">
-                <li class="list-group-item" th:each="post : ${posts}">
-                    <a th:href="@{/post/{postId}(postId=${post.id})}" th:text="${post.title}"></a>
-                </li>
-            </ul>
-        </div>
-        <div th:if="${posts.isEmpty()}">
-            <p class="text-muted">No posts found.</p>
+        
+        <div>
+            <h2 class="section-title">Posts Found</h2>
+            <div th:if="${posts != null && !posts.isEmpty()}">
+                <ul class="list-group search-list">
+                    <li class="list-group-item search-list-item" th:each="post : ${posts}">
+                        <a class="search-link" th:href="@{/post/{postId}(postId=${post.id})}" th:text="${post.title}"></a>
+                    </li>
+                </ul>
+            </div>
+            <div class="empty-results" th:if="${posts == null || posts.isEmpty()}">
+                <p class="mb-0">No posts found matching your search.</p>
+            </div>
         </div>
     </div>
 </div>
+
 <script src="/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

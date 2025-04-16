@@ -44,4 +44,8 @@ public class PostDto {
 
     private Long ownerId;
 
+    private Long commentCount; // Field to track number of comments
+
+    private CommentDto newestComment; // New field to store the newest comment
+
 }

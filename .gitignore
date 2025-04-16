@@ -31,7 +31,3 @@ build/
 
 ### VS Code ###
 .vscode/
-
-### Application properties with sensitive data ###
-# Uncomment if you want to keep your actual credentials private
-# src/main/resources/application-prod.properties

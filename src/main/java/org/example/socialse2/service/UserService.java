@@ -9,28 +9,27 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 public interface UserService {
+    // Renamed to better reflect method purpose
+    void registerNewUser(RegistrationDto registrationDto);
 
-    void createUser(RegistrationDto registrationDto);
+    User retrieveUserByUsername(String username);
 
-    User findByUsername(String username);
+    void assignAdminRole(String username);
 
-    void makeUserAdmin(String username);
+    User retrieveUserById(Long id);
 
-    User findById(Long id);
+    User retrieveCurrentAuthenticatedUser();
 
-    User getCurrentUser();
+    void modifyUserProfile(UserDto user);
 
-    void updateUser(UserDto user);
+    boolean hasAdminPrivileges(String username);
 
-    boolean isAdmin(String username);
-
-    boolean isOwnerOfPost(String username, Long postId);
+    boolean isPostCreator(String username, Long postId);
 
     @Transactional
-    void deleteUser(Long id);
+    void removeUserAccount(Long id);
 
-    List<UserDto> searchUsers(String query);
+    List<UserDto> findUsersBySearchTerm(String query);
 
-    Page<UserDto> getUsers(int page, int size);
-
+    Page<UserDto> retrieveUsersPaginated(int page, int size);
 }

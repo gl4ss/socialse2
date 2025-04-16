@@ -8,16 +8,16 @@ import java.util.List;
 
 public interface PostService {
 
-    Page<PostDto> getPosts(PageRequest pageRequest);
+    Page<PostDto> retrievePostsPaginated(PageRequest pageRequest);
 
-    void createPost(PostDto post);
+    void createNewPost(PostDto post);
 
-    PostDto getPost(Long id);
+    PostDto retrievePostById(Long id);
 
-    void updatePost(PostDto postDto);
+    void updateExistingPost(PostDto postDto);
 
-    void deletePost(Long postId);
+    void removePost(Long postId);
 
-    List<PostDto> searchPosts(String query);
+    List<PostDto> searchPostsByTerm(String query);
 
 }

@@ -1,0 +1,36 @@
+body {
+    background: linear-gradient(to bottom, #b5eadb, #5c6bc0, #4a148c);
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* Wrapper for the entire form */
+.edit-post-wrapper {
+    display: flex;
+    justify-content: center;
+}
+
+/* Form styling */
+.edit-post-form {
+    background: #fff;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    width: 100%;
+    max-width: 750px;
+    border: 1px solid #ccc;
+}
+
+/* Submit Button */
+.btn-submit {
+    background-color: #8be0d0;
+    color: black;
+    border: none;
+    padding: 10px 25px;
+    font-weight: 600;
+    border-radius: 6px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-submit:hover {
+    background-color: #70c8bb;
+}

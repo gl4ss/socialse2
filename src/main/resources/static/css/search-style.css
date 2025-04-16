@@ -1,0 +1,70 @@
+body {
+    background-color: #a8e3dc;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.search-container {
+    background-color: transparent;
+}
+
+/* Wrapper for the whole table */
+.table-wrapper {
+    background-color: #ffffff;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Table Header */
+.table-header {
+    background-color: #fff;
+    padding: 10px 15px;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Table Row */
+.table-row {
+    background-color: #f4f4f4;
+    border-radius: 15px;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+}
+
+/* Buttons */
+.btn-edit {
+    background-color: #b9eee2;
+    color: black;
+    font-weight: 500;
+}
+
+.btn-delete {
+    background-color: #de4949;
+    color: white;
+    font-weight: 500;
+}
+
+.btn-view {
+    background-color: #b3e5dc;
+    color: black;
+    font-weight: 500;
+}
+
+/* Button hover effects */
+.btn-edit:hover,
+.btn-view:hover {
+    background-color: #8cd9ca;
+    color: black;
+}
+
+.btn-delete:hover {
+    background-color: #c53b3b;
+}
+
+/* Truncate long text */
+.text-truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

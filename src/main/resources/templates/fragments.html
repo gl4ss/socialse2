@@ -1,64 +1,121 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
-      xmlns:th="http://www.thymeleaf.org">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
     <meta charset="UTF-8">
     <title>Fragment File</title>
-    <!-- Include local Bootstrap 5 CSS -->
     <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/header.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Direct color assignments instead of variables */
+        
+        /* Global styles for components */
+        body {
+            background-color: #fff;
+        }
+        
+        .custom-card {
+            background-color: #B0E5DC;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            padding: 1.5rem;
+        }
+        
+        /* Color definitions that were previously variables */
+        .text-primary-color { color: #0d6efd; }
+        .bg-primary-color { background-color: #0d6efd; }
+        .border-primary-color { border-color: #0d6efd; }
+        
+        .text-primary-hover { color: #0b5ed7; }
+        .bg-primary-hover { background-color: #0b5ed7; }
+        
+        .text-dark { color: #2c3e50; }
+        .text-light-custom { color: #6c757d; }
+        
+        .bg-light-custom { background-color: #f8f9fa; }
+        .bg-white { background-color: #ffffff; }
+        .bg-grey { background-color: #f0f0f0; }
+        .bg-component { background-color: #B0E5DC; }
+        
+        .border-custom { border-color: #dee2e6; }
+        
+        .shadow-sm-custom { box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
+        .shadow-md-custom { box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+        .shadow-lg-custom { box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+        
+        .text-danger-color { color: #dc3545; }
+        .bg-danger-color { background-color: #dc3545; }
+        
+        .text-success-color { color: #198754; }
+        .bg-success-color { background-color: #198754; }
+        
+        .text-warning-color { color: #ffc107; }
+        .bg-warning-color { background-color: #ffc107; }
+        
+        .text-info-color { color: #0dcaf0; }
+        .bg-info-color { background-color: #0dcaf0; }
+    </style>
 </head>
 <body>
-<header th:fragment="header">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container">
-            <a class="navbar-brand" th:href="@{/}">Social Software Engineers 2</a>
-            <button aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"
-                    class="navbar-toggler"
-                    data-bs-target="#navbarNav" data-bs-toggle="collapse" type="button">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/}">Home</a>
-                    </li>
-                    <li class="nav-item" sec:authorize="hasRole('ADMIN')">
-                        <a class="nav-link" th:href="@{/admin/posts}">Posts Management</a>
-                    </li>
-                    <li class="nav-item" sec:authorize="hasRole('ADMIN')">
-                        <a class="nav-link" th:href="@{/admin/users}">Users Management</a>
-                    </li>
-                    <li class="nav-item" sec:authorize="isAuthenticated()">
-                        <a class="nav-link" th:href="@{/post/create}">Create Post</a>
-                    </li>
-                    <li class="nav-item" sec:authorize="!isAuthenticated()">
-                        <a class="nav-link" th:href="@{/register}">Register</a>
-                    </li>
-                    <li class="nav-item" sec:authorize="!isAuthenticated()">
-                        <a class="nav-link" th:href="@{/login}">Login</a>
-                    </li>
-                    <li class="nav-item" sec:authorize="isAuthenticated()">
-                        <a class="nav-link" th:href="@{/user}">Profile</a>
-                    </li>
-                    <li class="nav-item" sec:authorize="isAuthenticated()">
-                        <a class="nav-link" th:href="@{/logout}">Logout</a>
-                    </li>
-                </ul>
-                <form class="d-flex" method="get" th:action="@{/search}">
-                    <input aria-label="Search" class="form-control me-2" name="query" placeholder="Search"
-                           type="search">
-                    <button class="btn btn-outline-success" type="submit">Search</button>
-                </form>
-            </div>
+    <header th:fragment="header">
+        <div class="custom-header">
+            <nav class="navbar navbar-expand-lg navbar-light bg-white shadow rounded px-4 py-2">
+                <div class="container-fluid">
+                    <a class="navbar-brand fw-bold me-4" th:href="@{/}">Develop Social Website</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#navbarNav"
+                            aria-controls="navbarNav" aria-expanded="false"
+                            aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+    
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav me-auto d-flex align-items-center gap-3">
+                            <li class="nav-item">
+                                <a class="nav-link rounded-button" th:href="@{/}">Home</a>
+                            </li>
+                            <li class="nav-item" sec:authorize="isAuthenticated()">
+                                <a class="nav-link rounded-button" th:href="@{/post/create}">Create Post</a>
+                            </li>
+                            <li class="nav-item" sec:authorize="isAuthenticated()">
+                                <a class="nav-link rounded-button" th:href="@{/user}">Profile</a>
+                            </li>
+                            <li class="nav-item" sec:authorize="!isAuthenticated()">
+                                <a class="nav-link rounded-button" th:href="@{/register}">Register</a>
+                            </li>
+                            <li class="nav-item" sec:authorize="!isAuthenticated()">
+                                <a class="nav-link rounded-button" th:href="@{/login}">Login</a>
+                            </li>
+                            <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                                <a class="nav-link rounded-button" th:href="@{/admin/posts}">Posts Management</a>
+                            </li>
+                            <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                                <a class="nav-link rounded-button" th:href="@{/admin/users}">Users Management</a>
+                            </li>
+                        </ul>
+    
+                        <form class="d-flex mx-auto" method="get" th:action="@{/search}">
+                            <input class="form-control me-2 search-input rounded-pill" type="search" name="query" placeholder="Search" aria-label="Search">
+                        </form>
+    
+                        <ul class="navbar-nav ms-auto" sec:authorize="isAuthenticated()">
+                            <li class="nav-item">
+                                <a class="nav-link rounded-button" th:href="@{/logout}">Log out</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
         </div>
-    </nav>
-</header>
-
-<footer th:fragment="footer">
-    <!-- Footer content goes here -->
-    <p>Copyright © 2024</p>
+    </header>
+    <div class="container">
+        <p class="text-center mb-0"></p>
+    </div>
 </footer>
-<!-- Include locally loaded Bootstrap 5 JS for responsive navbar -->
 <script src="/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
