@@ -1,6 +1,9 @@
 package org.example.socialse2.service.impl;
 
-import jakarta.persistence.EntityNotFoundException;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 import org.example.socialse2.dto.PostDto;
 import org.example.socialse2.mapper.PostMapper;
 import org.example.socialse2.model.Post;
@@ -16,9 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -36,14 +37,11 @@ public class PostServiceImpl implements PostService {
     public Page<PostDto> retrievePostsPaginated(PageRequest pageRequest) {
         Page<Post> postsPage = contentRepository.findAll(pageRequest);
 
-        // Log found posts for debugging
         log.info("Found {} posts in database with pagination", postsPage.getContent().size());
 
-        // Map to DTOs and ensure owner information is correctly set
         return postsPage.map(post -> {
             PostDto dto = PostMapper.toDto(post);
 
-            // Additional validation of owner info
             if (post.getUser() != null) {
                 dto.setOwnerName(post.getUser().getUsername());
                 dto.setOwnerId(post.getUser().getId());
@@ -72,7 +70,6 @@ public class PostServiceImpl implements PostService {
         Post content = PostMapper.toEntity(postDto);
         content.setUser(account);
 
-        // Initialize votes to 0 if null
         if (content.getUpVotes() == null) content.setUpVotes(0L);
         if (content.getDownVotes() == null) content.setDownVotes(0L);
 
@@ -103,7 +100,6 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public void removePost(Long postId) {
-        // Verify content exists before deletion
         if (!contentRepository.existsById(postId)) {
             throw new EntityNotFoundException("Cannot delete - content with ID " + postId + " not found");
         }

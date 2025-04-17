@@ -1,5 +1,8 @@
 package org.example.socialse2.service.impl;
 
+import java.util.Collection;
+import java.util.stream.Collectors;
+
 import org.example.socialse2.model.User;
 import org.example.socialse2.repository.UserRepository;
 import org.springframework.security.core.GrantedAuthority;
@@ -8,9 +11,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import java.util.Collection;
-import java.util.stream.Collectors;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -28,7 +28,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException("Account not found");
         }
         
-        // Convert user roles to GrantedAuthorities
         Collection<? extends GrantedAuthority> authorities = account.getRoles()
                 .stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName()))

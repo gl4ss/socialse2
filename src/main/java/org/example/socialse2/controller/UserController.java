@@ -1,6 +1,12 @@
 package org.example.socialse2.controller;
 
-import jakarta.validation.Valid;
+import java.io.IOException;
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.example.socialse2.dto.PostDto;
 import org.example.socialse2.dto.UserDto;
 import org.example.socialse2.mapper.PostMapper;
@@ -10,8 +16,6 @@ import org.example.socialse2.model.User;
 import org.example.socialse2.service.CommentService;
 import org.example.socialse2.service.PostService;
 import org.example.socialse2.service.UserService;
-import org.example.socialse2.util.FileUtil;
-import org.example.socialse2.util.SecurityUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -20,14 +24,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.io.IOException;
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
+import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/user")
@@ -60,18 +63,14 @@ public class UserController {
         User accountDetails = accountService.retrieveUserById(id);
         model.addAttribute("user", accountDetails);
         
-        // Get recent posts by this user (last 5)
         List<PostDto> recentPosts = new ArrayList<>();
         
         if (accountDetails.getPosts() != null && !accountDetails.getPosts().isEmpty()) {
-            // Get the 5 most recent posts for this user
             recentPosts = accountDetails.getPosts().stream()
                 .sorted(Comparator.comparing(Post::getCreatedAt).reversed())
                 .limit(5)
                 .map(post -> {
                     PostDto dto = PostMapper.toDto(post);
-                    
-                    // Get the comment count for this post
                     List<?> comments = commentService.retrieveCommentsByPostId(post.getId());
                     dto.setCommentCount((long) (comments != null ? comments.size() : 0));
                     
@@ -145,12 +144,10 @@ public class UserController {
         accountService.removeUserAccount(id);
         log.info("Account with ID {} deactivated by {}", id, currentUser.getUsername());
         
-        // Redirect to admin panel if admin is deactivating someone else's account
         if (isAdmin && !isSelfDelete) {
             return "redirect:/admin/users";
         }
         
-        // Redirect to logout if user deactivated their own account
         return "redirect:/logout";
     }
 

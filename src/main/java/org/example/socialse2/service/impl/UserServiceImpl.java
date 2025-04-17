@@ -160,26 +160,21 @@ public class UserServiceImpl implements UserService {
         User userToDelete = retrieveUserById(id);
 
         if (currentUser.getId().equals(userToDelete.getId()) || hasAdminPrivileges(currentUser.getUsername())) {
-            // Clear the roles collection properly to avoid any JPA relationship issues
             userToDelete.getRoles().clear();
             userRepository.save(userToDelete);
 
-            // First delete comments made by the user on other users' posts
             commentRepository.deleteByUserId(userToDelete.getId());
 
-            // Now handle posts - use the repository to delete them as this ensures they're attached to the session
             if (userToDelete.getPosts() != null && !userToDelete.getPosts().isEmpty()) {
                 List<Long> postIds = userToDelete.getPosts().stream()
                         .map(Post::getId)
                         .collect(Collectors.toList());
 
                 for (Long postId : postIds) {
-                    // This ensures we're working with attached entities
                     postRepository.findById(postId).ifPresent(postRepository::delete);
                 }
             }
 
-            // Now delete the User
             userRepository.delete(userToDelete);
         } else {
             throw new SecurityException("Access denied: insufficient privileges for account deletion");

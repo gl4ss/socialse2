@@ -4,7 +4,6 @@ import org.example.socialse2.dto.PostDto;
 import org.example.socialse2.dto.UserDto;
 import org.example.socialse2.service.PostService;
 import org.example.socialse2.service.UserService;
-import org.example.socialse2.util.PaginationUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
@@ -32,11 +31,9 @@ public class AdminController {
 
     @GetMapping("/posts")
     public String manageContentPaginated(Model model, @RequestParam(defaultValue = "1") int page) {
-        // Ensure page is at least 1
         int pageNumber = Math.max(1, page);
         int pageSize = 10;
         
-        // Convert from 1-based (user-friendly) to 0-based (Spring Data)
         PageRequest pageable = PageRequest.of(pageNumber - 1, pageSize);
         Page<PostDto> contentPage = contentService.retrievePostsPaginated(pageable);
         
@@ -53,11 +50,9 @@ public class AdminController {
             @RequestParam(name = "size", defaultValue = "10") int size,
             Model model) {
             
-        // Ensure page is at least 1 and size is reasonable
         int pageNumber = Math.max(1, page);
         int pageSize = Math.min(100, Math.max(1, size)); // Between 1 and 100
         
-        // We need to pass the correct parameters to match the service implementation
         Page<UserDto> accountsPage = accountService.retrieveUsersPaginated(pageNumber, pageSize);
         
         model.addAttribute("users", accountsPage.getContent());

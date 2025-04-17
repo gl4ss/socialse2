@@ -138,14 +138,10 @@
 <!-- Main Wrapper -->
 <div class="container mt-5">
     <div class="post-body-card">
-        <!-- Post Title and Short Description -->
         <h1 class="post-title" th:text="${postDto.title}"></h1>
         <h5 class="post-short-description mb-4" th:text="${postDto.shortDescription}"></h5>
-        <!-- Post Image -->
         <img alt="Post Image" class="img-fluid post-image mb-4" th:src="@{/post/image/{id}(id=${postDto.id})}">
-        <!-- Post Content -->
         <div class="post-content mb-4" th:utext="${postDto.content}"></div>
-        <!-- Post Metadata -->
         <div class="post-meta mb-4">
             <p><strong>Created at:</strong> <span th:text="${#temporals.format(postDto.createdAt, 'MMM dd, yyyy HH:mm')}"></span></p>
             <p><strong>Updated at:</strong> <span th:text="${#temporals.format(postDto.updatedAt, 'MMM dd, yyyy HH:mm')}"></span></p>
@@ -153,7 +149,6 @@
                 <a th:href="@{/user/{userId}(userId=${postDto.ownerId})}" th:text="${postDto.getOwnerName()}"></a>
             </p>
         </div>
-        <!-- Comments Section -->
         <div class="comments-section mb-4">
             <h4 class="mb-3">Comments:</h4>
             <div class="comment-box mb-3" th:each="comment : ${comments}">
@@ -166,7 +161,6 @@
                 </div>
             </div>
         </div>
-        <!-- Comment Form -->
         <div class="comment-form" sec:authorize="isAuthenticated()">
             <form method="post" role="form" th:action="@{/post/__${postId}__/comment}" th:object="${commentDto}">
                 <h5 class="mb-3">Leave a comment:</h5>

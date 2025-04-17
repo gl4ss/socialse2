@@ -1,5 +1,9 @@
 package org.example.socialse2.controller;
 
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.example.socialse2.dto.CommentDto;
 import org.example.socialse2.dto.PostDto;
 import org.example.socialse2.dto.UserDto;
@@ -15,10 +19,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 public class RootController {
@@ -38,17 +38,13 @@ public class RootController {
     public String displayHomepage(Model model, @RequestParam(defaultValue = "1") int page) {
         int pageSize = 10; // Set your desired page size
 
-        // Sort by creation date descending to show newest posts first
         PageRequest pageable = PageRequest.of(page - 1, pageSize, Sort.by("createdAt").descending());
         Page<PostDto> contentPage = contentService.retrievePostsPaginated(pageable);
 
-        // Enhance posts with newest comment
         List<PostDto> enhancedPosts = contentPage.getContent().stream()
             .map(post -> {
-                // Get comments for this post
                 List<CommentDto> comments = commentService.retrieveCommentsByPostId(post.getId());
                 
-                // Set the newest comment (if any exists)
                 if (comments != null && !comments.isEmpty()) {
                     // Sort comments by creation time (newest first)
                     comments.sort(Comparator.comparing(CommentDto::getCreatedAt).reversed());
@@ -60,7 +56,6 @@ public class RootController {
             })
             .collect(Collectors.toList());
 
-        // Log post information for debugging
         log.info("Retrieved {} posts for homepage", enhancedPosts.size());
 
         model.addAttribute("posts", enhancedPosts);

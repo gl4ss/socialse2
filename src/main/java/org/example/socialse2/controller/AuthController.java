@@ -1,6 +1,5 @@
 package org.example.socialse2.controller;
 
-import jakarta.validation.Valid;
 import org.example.socialse2.dto.RegistrationDto;
 import org.example.socialse2.model.User;
 import org.example.socialse2.service.UserService;
@@ -12,6 +11,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+
+import jakarta.validation.Valid;
 
 @Controller
 public class AuthController {
@@ -57,5 +58,4 @@ public class AuthController {
         return "login";
     }
     
-    // Login processing is handled by Spring Security
 }

@@ -68,7 +68,6 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public void removeComment(Long commentId) {
-        // Verify feedback exists before deletion
         if (!feedbackRepository.existsById(commentId)) {
             throw new EntityNotFoundException("Cannot delete - feedback with ID " + commentId + " not found");
         }
